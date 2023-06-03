@@ -38,7 +38,7 @@ function App() {
 			<div className="container">
 				<p className='text-center mt-5'>Hello from React</p>
 				<Nouns onSelectNoun={handleSelectNoun} nouns={nouns}/>
-				<p className='text-center mt-5'>Selected noun: {selectedNoun}</p>
+				<p className='text-center mt-5'>Your sentence: "{selectedNoun}"</p>
 			</div>
 		</Fragment>
 	);
