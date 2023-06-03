@@ -16,7 +16,7 @@ const ListNouns = ({ nouns, onSelectNoun }) => {
 
   return (
     <div className="container">
-      <h1>Nouns Dropdown</h1>
+      <h1>Nouns</h1>
       <Select
         value={selectedNoun}
         options={nounOptions}
