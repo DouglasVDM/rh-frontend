@@ -8,15 +8,15 @@ const Sentences = ({ sentences }) => {
         <thead>
           <tr>
             <th scope="col">id</th>
-            <th scope="col">sentence_name</th>
+            <th scope="col">sentence</th>
           </tr>
         </thead>
         <tbody>
           {sentences.map((sentence, index) => {
             return (
-              <tr key={sentence.sentence_id}>
+              <tr key={sentence.id}>
                 <td>{index + 1}</td>
-                <td>{sentence.sentence_name}</td>
+                <td>{sentence.sentence}</td>
               </tr>
             );
           })}
