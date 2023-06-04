@@ -1,11 +1,11 @@
 import React from 'react';
 
-const PreviousSentences = ({ sentences }) => {
+const PreviousSentences = ({ sentence }) => {
   return (
     <div>
       <h3>Previous Sentences:</h3>
       <ul>
-        {sentences.map((sentence) => (
+        {sentence.map((sentence) => (
           <li key={sentence.id}>{sentence.sentence}</li>
         ))}
       </ul>
