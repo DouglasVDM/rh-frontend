@@ -88,6 +88,7 @@ function App() {
       setSelectedWords([]);
       showSuccesToastMessage();
       window.location = '/';
+      console.log('handlesubmit-response:', response);
     } catch (err) {
       console.error('Error submitting sentences', err);
     }
