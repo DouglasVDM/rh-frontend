@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 // components
 import PreviousSentences from './components/PreviousSentences';
@@ -11,19 +13,29 @@ import SentenceDisplay from "./components/SentenceDisplay";
 const baseURL = process.env.NODE_ENV === 'production' ? "/api/v1/" : 'http://localhost:5000/api/v1';
 
 function App() {
-  const [sentence, setSentence] = useState([]);
+  const [sentences, setSentences] = useState([]);
+  const [sentence, setSentence] = useState('');
   const [wordTypes, setWordTypes] = useState([]);
   const [selectedWords, setSelectedWords] = useState([]);
-
-
   
+  const showErrorToastMessage = () => {
+    toast.error('Sentence is empty!', {
+        position: toast.POSITION.TOP_RIGHT
+    });
+  };
+    
+  const showSuccesToastMessage = () => {
+    toast.success('Sentence submitted successfully!', {
+        position: toast.POSITION.TOP_RIGHT
+    });
+  };
+    
   // Fetch the word types from the backend when the component mounts
   const fetchWordTypes = async () => {
     try {
       const response = await fetch(`${baseURL}/words`);
       const data = await response.json();
       setWordTypes(data);
-      console.log('fetchwordtypes', data);
     } catch (err) {
       console.error('Error retrieving word types', err);
     }
@@ -34,7 +46,7 @@ function App() {
     try {
       const response = await fetch(`${baseURL}/sentences`);
       const data = await response.json();
-      setSentence(data);
+      setSentences(data);
     } catch (err) {
       console.error('Error retrieving sentences', err);
     }
@@ -48,48 +60,48 @@ function App() {
   
   const handleWordTypeChange = async (event) => {
     const selectedWordType = event.target.value;
-    try {
-      // Fetch the words of the selected type from the backend
-      const response = await fetch(`${baseURL}/words/${selectedWordType}`);
-      const data = await response.json();
-      setSelectedWords([...selectedWords, ...data]);
-      console.log('wordtype', data)
-    } catch (err) {
-      console.error('Error retrieving words', err);
+      setSelectedWords([...selectedWords, selectedWordType]);
     }
-  };
-  
   const handleWordSelect = (word) => {
-    // Append the selected word to the sentence
+    // Append the selected word to the sentences
     setSentence((prevSentence) => prevSentence + ' ' + word);
   };
 
   const handleSubmit = async () => {
+    if (!sentence) {
+      console.error('Error: Sentence is empty');
+      showErrorToastMessage()
+      return; // Stop the execution of the function
+    }
+    
     try {
-      // Submit the sentence to the backend
-      await fetch(`${baseURL}/sentences`, {
+      // Submit the sentences to the backend
+      const body = {sentence};
+      const response = await fetch(`${baseURL}/sentences`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ sentence }),
+        body: JSON.stringify(body),
       });
-      setSentence('');
+      setSentences('');
       setSelectedWords([]);
-      alert('Sentence submitted successfully');
+      showSuccesToastMessage();
+      window.location = '/';
     } catch (err) {
-      console.error('Error submitting sentence', err);
+      console.error('Error submitting sentences', err);
     }
   };
 
   return (
     <Container>
-      <Row>
+      <h1 className="text-center mt-5">Sentence App</h1>
+      <Row className="text-center mt-5">
         <Col>
           <WordTypeSelect wordTypes={wordTypes} onWordTypeChange={handleWordTypeChange} />
         </Col>
       </Row>
-      <Row>
+      <Row className="text-center mt-5">
         <Col>
           {/* Render the selected words */}
           {selectedWords.map((word) => (
@@ -97,19 +109,20 @@ function App() {
           ))}
         </Col>
       </Row>
-      <Row>
+      <Row className="text-center mb-5">
         <Col>
-          <SentenceDisplay sentence={sentence} />
+          <SentenceDisplay sentences={sentences} />
+        </Col>
+      </Row>
+      <Row className="text-center mt-5">
+        <Col>
+          <SentenceForm onSubmit={handleSubmit} sentence={sentence} />
+          <ToastContainer/>
         </Col>
       </Row>
       <Row>
-        <Col>
-          <SentenceForm onSubmit={handleSubmit} />
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <PreviousSentences sentence={sentence} />
+        <Col  className="text-center mt-5">
+          <PreviousSentences sentences={sentences} />
         </Col>
       </Row>  
     </Container>
