@@ -1,83 +1,38 @@
-import { Fragment, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 
 // components
-import Nouns from "./components/Nouns";
-import Sentences from "./components/Sentences";
-import SendToBackend from "./components/SendToBackend";
-import Determiners from "./components/Determiners";
+import PreviousSentences from './components/PreviousSentences';
+import { Col, Container, Row } from "react-bootstrap";
 
-// const baseURL = process.env.NODE_ENV==='production' ? "/api/v1/" : 'http://localhost:5000/api/v1';
-const baseURL = "http://localhost:5000/api/v1";
+const baseURL = process.env.NODE_ENV==='production' ? "/api/v1/" : 'http://localhost:5000/api/v1';
 
 function App() {
-  const [nouns, setNouns] = useState([]);
   const [sentences, setSentences] = useState([]);
-  const [determiners, setDeterminers] = useState([]);
-  const [selectedNoun, setSelectedNoun] = useState("");
-  const [selectedDeterminer, setSelectedDeterminer] = useState("");
-
-  const handleSelectNoun = (noun) => {
-    setSelectedNoun(noun);
-    // Use the selected value in this component or pass it to other child components
-  };
-
-  const handleSelectDeterminer = (determiner) => {
-    setSelectedDeterminer(determiner);
-    // Use the selected value in this component or pass it to other child components
-  };
-
-  const getNouns = async () => {
-    try {
-      const response = await fetch(`${baseURL}/nouns`);
-      const jsonData = await response.json();
-      setNouns(jsonData);
-    } catch (err) {
-      console.error(err.message);
-    }
-  };
-
-  const getSentences = async () => {
+  
+  // Fetch the previously submitted sentences from the backend when the component mounts
+  const fetchSentences = async () => {
     try {
       const response = await fetch(`${baseURL}/sentences`);
-      const jsonData = await response.json();
-      setSentences(jsonData);
+      const data = await response.json();
+      setSentences(data);
     } catch (err) {
-      console.error(err.message);
-    }
-  };
-
-  const getDeterminers = async () => {
-    try {
-      const response = await fetch(`${baseURL}/determiners`);
-      const jsonData = await response.json();
-      setDeterminers(jsonData);
-    } catch (err) {
-      console.error(err.message);
+      console.error('Error retrieving sentences', err);
     }
   };
 
   useEffect(() => {
-    getNouns();
-    getSentences();
-	getDeterminers();
+  fetchSentences();
   }, []);
 
   return (
-    <Fragment>
-      <div className="container">
-        <p className="text-center mt-5">Hello from React</p>
-
-        <Determiners onSelectDeterminer={handleSelectDeterminer} determiners={determiners} />
-        <Nouns onSelectNoun={handleSelectNoun} nouns={nouns} />
-		
-        <p className="text-center mt-5">Your sentence: "{selectedDeterminer} {selectedNoun}"</p>
-
-        {selectedNoun && <SendToBackend selectedNoun={selectedNoun} />}
-
-        <Sentences sentences={sentences} setSentences={setSentences} />
-      </div>
-    </Fragment>
+        <Container>
+        <Row>
+          <Col>
+            <PreviousSentences sentences={sentences} />
+          </Col>
+        </Row>
+      </Container>  
   );
 }
 
