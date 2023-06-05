@@ -1,132 +1,143 @@
 import { useEffect, useState } from "react";
-import { Col, Container, Row } from "react-bootstrap";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { Button, Form } from "react-bootstrap";
+import { ToastContainer } from "react-toastify";
 
-// components
-import PreviousSentences from './components/PreviousSentences';
-import WordTypeSelect from "./components/WordTypeSelect";
-import WordButton from "./components/WordButton";
-import SentenceForm from "./components/SentenceForm";
-import SentenceDisplay from "./components/SentenceDisplay";
 
-const baseURL = process.env.NODE_ENV === 'production' ? "/api/v1/" : 'http://localhost:5000/api/v1';
-
-function App() {
-  const [sentences, setSentences] = useState([]);
-  const [sentence, setSentence] = useState('');
-  const [wordTypes, setWordTypes] = useState([]);
-  const [selectedWords, setSelectedWords] = useState([]);
+const baseURL =
+  process.env.NODE_ENV === "production"
+  ? "/api/v1/"
+  : "http://localhost:5000/api/v1";
   
-  const showErrorToastMessage = () => {
-    toast.error('Sentence is empty!', {
-        position: toast.POSITION.TOP_RIGHT
-    });
-  };
+  function App() {
     
-  const showSuccesToastMessage = () => {
-    toast.success('Sentence submitted successfully!', {
-        position: toast.POSITION.TOP_RIGHT
-    });
-  };
+      const [selectedType, setSelectedType] = useState("");
+      const [selectedWord, setSelectedWord] = useState("");
+      const [sentence, setSentence] = useState("");
+      const [types, setTypes] = useState([]);
     
+
+  
   // Fetch the word types from the backend when the component mounts
   const fetchWordTypes = async () => {
     try {
-      const response = await fetch(`${baseURL}/words`);
+      const response = await fetch(`${baseURL}/wordtypes`);
       const data = await response.json();
-      setWordTypes(data);
+      setTypes(data);
+      console.log('wordtypes',data)
     } catch (err) {
-      console.error('Error retrieving word types', err);
-    }
-  };
-  
-  // Fetch the previously submitted sentences from the backend when the component mounts
-  const fetchSentences = async () => {
-    try {
-      const response = await fetch(`${baseURL}/sentences`);
-      const data = await response.json();
-      setSentences(data);
-    } catch (err) {
-      console.error('Error retrieving sentences', err);
+      console.error("Error retrieving word types", err);
     }
   };
 
+
   useEffect(() => {
-    fetchSentences();
     fetchWordTypes();
-    // handleWordTypeChange();
   }, []);
-  
-  const handleWordTypeChange = async (event) => {
-    const selectedWordType = event.target.value;
-      setSelectedWords([...selectedWords, selectedWordType]);
+
+
+  const wordsByType = async(event)=>{
+  const table = event.target.value;
+
+  try {
+    const response = await fetch(`${baseURL}/${table}`);
+    const data = await response.json();
+    setTypes([data]);
+    // setSelectedWord([data]);
+    console.log('wordsByType',[data])
+  } catch (err) {
+    console.error("Error retrieving words", err);
+  }     
+ }
+
+  const handleTypeChange = async(event) => {
+    setSelectedType(event.target.value);
+    setSelectedWord("");
+  };
+
+
+  const handleWordChange = (event) => {
+    setSelectedWord(event.target.value);
+  };
+
+  const handleAddWord = () => {
+    if (selectedWord) {
+      setSentence((prevSentence) => prevSentence + " " + selectedWord);
+      setSelectedWord("");
     }
-  const handleWordSelect = (word) => {
-    // Append the selected word to the sentences
-    setSentence((prevSentence) => prevSentence + ' ' + word);
   };
 
   const handleSubmit = async () => {
     if (!sentence) {
-      console.error('Error: Sentence is empty');
-      showErrorToastMessage()
+      console.error("Error: Sentence is empty");
+      alert("Error: Sentence is empty")
       return; // Stop the execution of the function
     }
-    
+
     try {
-      // Submit the sentences to the backend
-      const body = {sentence};
       const response = await fetch(`${baseURL}/sentences`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(body),
+        body: JSON.stringify({ sentence }),
       });
-      setSentences('');
-      setSelectedWords([]);
-      showSuccesToastMessage();
-      window.location = '/';
-      console.log('handlesubmit-response:', response);
-    } catch (err) {
-      console.error('Error submitting sentences', err);
+      const data = await response.json();
+      console.log('submitted sentence =', data.sentence);
+    } catch (error) {
+      console.log(error);
     }
   };
 
   return (
-    <Container>
-      <h1 className="text-center mt-5">Sentence App</h1>
-      <Row className="text-center mt-5">
-        <Col>
-          <WordTypeSelect wordTypes={wordTypes} onWordTypeChange={handleWordTypeChange} />
-        </Col>
-      </Row>
-      <Row className="text-center mt-5">
-        <Col>
-          {/* Render the selected words */}
-          {selectedWords.map((word) => (
-            <WordButton key={word} word={word} onWordSelect={handleWordSelect} />
+    <Form className="text-center">
+      <Form.Group className="text-center m-5">
+        <Form.Label className="text-center">Choose a type:</Form.Label>
+        <Form.Control
+          as="select"
+          value={selectedType}
+          onChange={handleTypeChange}
+        >
+          <option value="">Select type</option>
+          {types.map((type, index) => (
+            <option key={index} value={type.type}>
+              {type.type}
+            </option>
           ))}
-        </Col>
-      </Row>
-      <Row className="text-center mb-5">
-        <Col>
-          <SentenceDisplay sentences={sentences} />
-        </Col>
-      </Row>
-      <Row className="text-center mt-5">
-        <Col>
-          <SentenceForm onSubmit={handleSubmit} sentence={sentence} />
-          <ToastContainer/>
-        </Col>
-      </Row>
-      <Row>
-        <Col  className="text-center mt-5">
-          <PreviousSentences sentences={sentences} />
-        </Col>
-      </Row>  
-    </Container>
+        </Form.Control>
+      </Form.Group>
+
+      {selectedType && (
+        <div>
+          <Form.Group className="text-center m-5">
+            <Form.Label>Choose a word:</Form.Label>
+            <Form.Control
+              as="select"
+              value={selectedWord}
+              onChange={handleWordChange}
+            >
+              <option value="">Select word</option>
+              {wordsByType[selectedType].map((word, index) => (
+                <option key={index} value={word}>
+                  {word}
+                </option>
+              ))}
+            </Form.Control>
+          </Form.Group>
+          <Button className="text-center" variant="primary" onClick={handleAddWord}>
+            Add Word
+          </Button>
+        </div>
+      )}
+
+      <div>
+        <h1 className="text-center mt-5">Sentence:</h1>
+        <p className="text-center">{sentence}</p>
+        <Button className="text-center" variant="primary" onClick={handleSubmit}>
+          Submit
+        </Button>
+        <ToastContainer />
+      </div>
+    </Form>
   );
 }
 
