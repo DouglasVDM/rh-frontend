@@ -37,7 +37,7 @@ const baseURL =
   useEffect(() => {
     fetchWordTypes();
   }, []);
-
+  
   const wordsByType = async()=>{
 
   try {
@@ -61,7 +61,6 @@ const fetchSentences = async () => {
     const response = await fetch(`${baseURL}/sentences`);
     const data = await response.json();
     setSentences(data);
-    console.log(data)
   } catch (err) {
     console.error('Error retrieving sentences', err);
   }
