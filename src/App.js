@@ -38,6 +38,7 @@ const baseURL =
     fetchWordTypes();
   }, []);
   
+
   const wordsByType = async()=>{
 
   try {
@@ -68,7 +69,7 @@ const fetchSentences = async () => {
 
 useEffect(() => {
   fetchSentences();
-}, [sentence]);
+}, [sentences]);
 
 
   const handleTypeChange = async(event) => {
@@ -106,7 +107,8 @@ useEffect(() => {
         body: JSON.stringify({ sentence }),
       });
       const data = await response.json();
-      console.log('submitted sentence =', data.sentence);
+      setSentence('')
+      alert(`submitted sentence:, ${data.sentence}`);
     } catch (error) {
       console.log(error);
     }
