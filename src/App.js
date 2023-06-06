@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import { ToastContainer } from "react-toastify";
 
+// components
+import PreviousSentences from './components/PreviousSentences';
 
 const baseURL =
   process.env.NODE_ENV === "production"
@@ -13,6 +15,7 @@ const baseURL =
       const [selectedType, setSelectedType] = useState("");
       const [selectedWord, setSelectedWord] = useState("");
       const [sentence, setSentence] = useState("");
+      const [sentences, setSentences] = useState([]);
       const [types, setTypes] = useState([]);
       const [words, setWords] = useState([]);
     
@@ -50,6 +53,23 @@ const baseURL =
  useEffect(() => {
   wordsByType();
 }, [selectedType]);
+
+
+// Fetch the previously submitted sentences from the backend when the component mounts
+const fetchSentences = async () => {
+  try {
+    const response = await fetch(`${baseURL}/sentences`);
+    const data = await response.json();
+    setSentences(data);
+    console.log(data)
+  } catch (err) {
+    console.error('Error retrieving sentences', err);
+  }
+};
+
+useEffect(() => {
+  fetchSentences();
+}, [sentence]);
 
 
   const handleTypeChange = async(event) => {
@@ -142,6 +162,9 @@ const baseURL =
           Submit
         </Button>
         <ToastContainer />
+      </div>
+      <div>
+      <PreviousSentences sentences={sentences} />
       </div>
     </Form>
   );
