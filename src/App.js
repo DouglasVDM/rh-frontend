@@ -3,85 +3,75 @@ import { Button, Form } from "react-bootstrap";
 import { ToastContainer } from "react-toastify";
 
 // components
-import PreviousSentences from './components/PreviousSentences';
+import PreviousSentences from "./components/PreviousSentences";
 
 const baseURL =
   process.env.NODE_ENV === "production"
-  ? "/api/v1/"
-  : "http://localhost:5000/api/v1";
-  
-  function App() {
-    
-      const [selectedType, setSelectedType] = useState("");
-      const [selectedWord, setSelectedWord] = useState("");
-      const [sentence, setSentence] = useState("");
-      const [sentences, setSentences] = useState([]);
-      const [types, setTypes] = useState([]);
-      const [words, setWords] = useState([]);
-    
+    ? "/api/v1/"
+    : "http://localhost:5000/api/v1";
 
-  
+function App() {
+  const [selectedType, setSelectedType] = useState("");
+  const [selectedWord, setSelectedWord] = useState("");
+  const [sentence, setSentence] = useState("");
+  const [sentences, setSentences] = useState([]);
+  const [types, setTypes] = useState([]);
+  const [words, setWords] = useState([]);
+
   // Fetch the word types from the backend when the component mounts
   const fetchWordTypes = async () => {
     try {
       const response = await fetch(`${baseURL}/wordtypes`);
       const data = await response.json();
       setTypes(data);
-      console.log('wordtypes',data);
+      console.log("wordtypes", data);
     } catch (err) {
       console.error("Error retrieving word types", err);
     }
   };
 
-
   useEffect(() => {
     fetchWordTypes();
   }, []);
-  
 
-  const wordsByType = async()=>{
+  const wordsByType = async () => {
+    try {
+      const response = await fetch(`${baseURL}/${selectedType}`);
+      const data = await response.json();
+      setWords(data);
+      console.log(`${selectedType}:`, data);
+    } catch (err) {
+      console.error("Error retrieving words", err);
+    }
+  };
 
-  try {
-    const response = await fetch(`${baseURL}/${selectedType}`);
-    const data = await response.json();
-    setWords(data);
-    console.log(`${selectedType}:`,data)
-  } catch (err) {
-    console.error("Error retrieving words", err);
-  }     
- }
+  useEffect(() => {
+    wordsByType();
+  }, [selectedType]);
 
- useEffect(() => {
-  wordsByType();
-}, [selectedType]);
+  // Fetch the previously submitted sentences from the backend when the component mounts
+  const fetchSentences = async () => {
+    try {
+      const response = await fetch(`${baseURL}/sentences`);
+      const data = await response.json();
+      setSentences(data);
+    } catch (err) {
+      console.error("Error retrieving sentences", err);
+    }
+  };
 
+  useEffect(() => {
+    fetchSentences();
+  }, [sentences]);
 
-// Fetch the previously submitted sentences from the backend when the component mounts
-const fetchSentences = async () => {
-  try {
-    const response = await fetch(`${baseURL}/sentences`);
-    const data = await response.json();
-    setSentences(data);
-  } catch (err) {
-    console.error('Error retrieving sentences', err);
-  }
-};
-
-useEffect(() => {
-  fetchSentences();
-}, [sentences]);
-
-
-  const handleTypeChange = async(event) => {
+  const handleTypeChange = async (event) => {
     setSelectedType(event.target.value);
     setSelectedWord("");
   };
 
-
   const handleWordChange = (event) => {
     setSelectedWord(event.target.value);
   };
-
 
   const handleAddWord = () => {
     if (selectedWord) {
@@ -90,11 +80,10 @@ useEffect(() => {
     }
   };
 
-
   const handleSubmit = async () => {
     if (!sentence) {
       console.error("Error: Sentence is empty");
-      alert("Error: Sentence is empty")
+      alert("Error: Sentence is empty");
       return; // Stop the execution of the function
     }
 
@@ -107,24 +96,28 @@ useEffect(() => {
         body: JSON.stringify({ sentence }),
       });
       const data = await response.json();
-      setSentence('')
+      setSentence("");
       alert(`submitted sentence:, ${data.sentence}`);
     } catch (error) {
       console.log(error);
     }
   };
 
-  
   return (
     <Form className="text-center">
       <Form.Group className="text-center m-5">
-        <Form.Label className="text-center">Choose a type:</Form.Label>
+        <Form.Label className="text-center">
+          <h1 className="mt-3">Build a Sentence Web App</h1>
+        </Form.Label>
+      </Form.Group>
+      <Form.Group className="text-center m-5">
+        <Form.Label className="text-center">Choose a word type</Form.Label>
         <Form.Control
           as="select"
           value={selectedType}
           onChange={handleTypeChange}
         >
-          <option value="">Select type</option>
+          <option value="">Select word type</option>
           {types.map((type, index) => (
             <option key={index} value={type.type}>
               {type.type}
@@ -135,8 +128,8 @@ useEffect(() => {
 
       {selectedType && (
         <div className="text-center m-5">
-          <Form.Group >
-            <Form.Label>Choose a word:</Form.Label>
+          <Form.Group>
+            <Form.Label>Choose a word</Form.Label>
             <Form.Control
               as="select"
               value={selectedWord}
@@ -150,22 +143,30 @@ useEffect(() => {
               ))}
             </Form.Control>
           </Form.Group>
-          <Button className="text-center mt-2" variant="primary" onClick={handleAddWord}>
+          <Button
+            className="text-center mt-2"
+            variant="primary"
+            onClick={handleAddWord}
+          >
             Add Word
           </Button>
         </div>
       )}
 
       <div>
-        <h1 className="text-center mt-3">Sentence:</h1>
+        <h1 className="text-center mt-3">Your sentence:</h1>
         <p className="text-center">{sentence}</p>
-        <Button className="text-center" variant="primary" onClick={handleSubmit}>
+        <Button
+          className="text-center"
+          variant="primary"
+          onClick={handleSubmit}
+        >
           Submit
         </Button>
         <ToastContainer />
       </div>
       <div>
-      <PreviousSentences sentences={sentences} />
+        <PreviousSentences sentences={sentences} />
       </div>
     </Form>
   );
