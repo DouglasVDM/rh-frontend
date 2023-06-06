@@ -6,7 +6,7 @@ const PreviousSentences = ({ sentences }) => {
       <h3 className="text-center mt-5">Previous Sentences</h3>
       <ul>
         {sentences.map((sentence) => (
-          <p key={sentence.id}>{sentence.id}. {sentence.name}</p>
+          <p key={sentence.id}>{sentence.id}. {sentence.sentence}</p>
         ))}
       </ul>
     </div>
