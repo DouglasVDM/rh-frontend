@@ -14,6 +14,7 @@ const baseURL =
       const [selectedWord, setSelectedWord] = useState("");
       const [sentence, setSentence] = useState("");
       const [types, setTypes] = useState([]);
+      const [words, setWords] = useState([]);
     
 
   
@@ -23,7 +24,7 @@ const baseURL =
       const response = await fetch(`${baseURL}/wordtypes`);
       const data = await response.json();
       setTypes(data);
-      console.log('wordtypes',data)
+      console.log('wordtypes',data);
     } catch (err) {
       console.error("Error retrieving word types", err);
     }
@@ -34,20 +35,22 @@ const baseURL =
     fetchWordTypes();
   }, []);
 
-
-  const wordsByType = async(event)=>{
-  const table = event.target.value;
+  const wordsByType = async()=>{
 
   try {
-    const response = await fetch(`${baseURL}/${table}`);
+    const response = await fetch(`${baseURL}/${selectedType}`);
     const data = await response.json();
-    setTypes([data]);
-    // setSelectedWord([data]);
-    console.log('wordsByType',[data])
+    setWords(data);
+    console.log(`${selectedType}:`,data)
   } catch (err) {
     console.error("Error retrieving words", err);
   }     
  }
+
+ useEffect(() => {
+  wordsByType();
+}, [selectedType]);
+
 
   const handleTypeChange = async(event) => {
     setSelectedType(event.target.value);
@@ -59,12 +62,14 @@ const baseURL =
     setSelectedWord(event.target.value);
   };
 
+
   const handleAddWord = () => {
     if (selectedWord) {
       setSentence((prevSentence) => prevSentence + " " + selectedWord);
       setSelectedWord("");
     }
   };
+
 
   const handleSubmit = async () => {
     if (!sentence) {
@@ -88,6 +93,7 @@ const baseURL =
     }
   };
 
+  
   return (
     <Form className="text-center">
       <Form.Group className="text-center m-5">
@@ -107,8 +113,8 @@ const baseURL =
       </Form.Group>
 
       {selectedType && (
-        <div>
-          <Form.Group className="text-center m-5">
+        <div className="text-center m-5">
+          <Form.Group >
             <Form.Label>Choose a word:</Form.Label>
             <Form.Control
               as="select"
@@ -116,21 +122,21 @@ const baseURL =
               onChange={handleWordChange}
             >
               <option value="">Select word</option>
-              {wordsByType[selectedType].map((word, index) => (
-                <option key={index} value={word}>
-                  {word}
+              {words.map((word) => (
+                <option key={word.id} value={word.name}>
+                  {word.name}
                 </option>
               ))}
             </Form.Control>
           </Form.Group>
-          <Button className="text-center" variant="primary" onClick={handleAddWord}>
+          <Button className="text-center mt-2" variant="primary" onClick={handleAddWord}>
             Add Word
           </Button>
         </div>
       )}
 
       <div>
-        <h1 className="text-center mt-5">Sentence:</h1>
+        <h1 className="text-center mt-3">Sentence:</h1>
         <p className="text-center">{sentence}</p>
         <Button className="text-center" variant="primary" onClick={handleSubmit}>
           Submit
