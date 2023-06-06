@@ -4,7 +4,7 @@
 This is the frontend of the PERN Stack application. It is built using React and communicates with the backend API to dynamically build sentences based on word types.
 
 ## Installation
-1. Clone the repository. `git clone https://github.com/DouglasVDM/testrfe.git`
+1. Clone the repository. `git clone ...`
 2. Navigate to the frontend directory. `cd frontend`
 3. Run the following command to install the dependencies: `npm i` or `npm install`
 4. Update the backend API URL in the code if necessary.
