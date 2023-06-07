@@ -8,7 +8,7 @@ import PreviousSentences from "./components/PreviousSentences";
 const baseURL =
   process.env.NODE_ENV === "production"
     ? "/api/v1/"
-    : "http://localhost:5000/api/v1";
+    : "https://rh-backend.onrender.com";
 
 function App() {
   const [selectedType, setSelectedType] = useState("");
