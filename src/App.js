@@ -78,6 +78,7 @@ function App() {
   const handleAddWord = () => {
     if (selectedWord) {
       setSentence((prevSentence) => prevSentence + " " + selectedWord);
+      selectedType("");
       setSelectedWord("");
     }
   };
