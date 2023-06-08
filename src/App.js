@@ -64,7 +64,7 @@ function App() {
 
   useEffect(() => {
     fetchSentences();
-  }, [sentences]);
+  }, []);
 
   const handleTypeChange = async (event) => {
     setSelectedType(event.target.value);
