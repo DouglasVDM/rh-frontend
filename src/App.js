@@ -115,8 +115,8 @@ function App() {
         <Form.Label className="text-center">
           <h1 className="mt-3">Build a Sentence Web App</h1>
         </Form.Label>
-    {loading ? <>Loading...</> : </Form.Group>
-      <Form.Group className="text-center m-5">
+    </Form.Group>
+    {loading ? <>Loading...</> : <Form.Group className="text-center m-5">
         <Form.Label className="text-center">Choose a word type</Form.Label>
         <Form.Control
           as="select"
