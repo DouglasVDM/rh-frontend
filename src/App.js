@@ -116,7 +116,7 @@ function App() {
           <h1 className="mt-3">Build a Sentence Web App</h1>
         </Form.Label>
     </Form.Group>
-    {loading ? <>Loading...</> : <Form.Group className="text-center m-5">
+    {loading ? <>Loading...from free hosting service, servers may take a few seconds to start</> : <Form.Group className="text-center m-5">
         <Form.Label className="text-center">Choose a word type</Form.Label>
         <Form.Control
           as="select"
