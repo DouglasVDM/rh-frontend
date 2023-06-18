@@ -19,15 +19,19 @@ function App() {
   const [sentences, setSentences] = useState([]);
   const [types, setTypes] = useState([]);
   const [words, setWords] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   // Fetch the word types from the backend when the component mounts
   const fetchWordTypes = async () => {
+    setLoading(true);
     try {
       const response = await fetch(`${baseURL}/wordtypes`);
       const data = await response.json();
       setTypes(data);
+      setLoading(false);
       console.log("wordtypes", data);
     } catch (err) {
+      setLoading(false);
       console.error("Error retrieving word types", err);
     }
   };
@@ -111,7 +115,7 @@ function App() {
         <Form.Label className="text-center">
           <h1 className="mt-3">Build a Sentence Web App</h1>
         </Form.Label>
-      </Form.Group>
+    {loading ? <>Loading...</> : </Form.Group>
       <Form.Group className="text-center m-5">
         <Form.Label className="text-center">Choose a word type</Form.Label>
         <Form.Control
@@ -126,7 +130,7 @@ function App() {
             </option>
           ))}
         </Form.Control>
-      </Form.Group>
+      </Form.Group>}
 
       {selectedType && (
         <div className="text-center m-5">
