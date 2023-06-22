@@ -45,3 +45,10 @@ This is the frontend of the PERN Stack application. It is built using React and 
 - Where possible ,split App.js into components for maintainability and reusability.
 ---
 ---
+## TDD with Jest
+
+### Install Jest as development dependency
+
+```
+npm i -D jest
+```
