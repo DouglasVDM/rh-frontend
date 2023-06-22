@@ -45,7 +45,7 @@ function App() {
       const response = await fetch(`${baseURL}/words/${selectedType}`);
       const data = await response.json();
       setWords(data);
-      console.log(`${selectedType}:`, data);
+      console.log("words of selectedType:", data);
     } catch (err) {
       console.error("Error retrieving words by type", err);
     }
@@ -115,22 +115,29 @@ function App() {
         <Form.Label className="text-center">
           <h1 className="mt-3">Build a Sentence Web App</h1>
         </Form.Label>
-    </Form.Group>
-    {loading ? <>Loading...from free hosting service, servers may take a few seconds to start</> : <Form.Group className="text-center m-5">
-        <Form.Label className="text-center">Choose a word type</Form.Label>
-        <Form.Control
-          as="select"
-          value={selectedType}
-          onChange={handleTypeChange}
-        >
-          <option value="">Select word type</option>
-          {types.map((word, index) => (
-            <option key={index} value={word.wordtype}>
-              {word.wordtype}
-            </option>
-          ))}
-        </Form.Control>
-      </Form.Group>}
+      </Form.Group>
+      {loading ? (
+        <>
+          Loading...from free hosting service, servers may take a few seconds to
+          start
+        </>
+      ) : (
+        <Form.Group className="text-center m-5">
+          <Form.Label className="text-center">Choose a word type</Form.Label>
+          <Form.Control
+            as="select"
+            value={selectedType}
+            onChange={handleTypeChange}
+          >
+            <option value="">Select word type</option>
+            {types.map((word, index) => (
+              <option key={index} value={word.wordtype}>
+                {word.wordtype}
+              </option>
+            ))}
+          </Form.Control>
+        </Form.Group>
+      )}
 
       {selectedType && (
         <div className="text-center m-5">
