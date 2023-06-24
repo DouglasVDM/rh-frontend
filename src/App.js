@@ -1,16 +1,16 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import { ToastContainer } from "react-toastify";
 
 // components
 import PreviousSentences from "./components/PreviousSentences";
 
-// const baseURL =
-//   process.env.NODE_ENV === "production"
-//     ? "/api/v1/"
-//     : "https://rh-backend.onrender.com/api/v1";
+const baseURL =
+  process.env.NODE_ENV === "production"
+    ? "/api/v1/"
+    : "http://localhost:5000/api/v1";
 
-const baseURL = "https://rh-backend.onrender.com/api/v1";
+// const baseURL = "https://rh-backend.onrender.com/api/v1";
 
 function App() {
   const [selectedType, setSelectedType] = useState("");
@@ -19,15 +19,19 @@ function App() {
   const [sentences, setSentences] = useState([]);
   const [types, setTypes] = useState([]);
   const [words, setWords] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   // Fetch the word types from the backend when the component mounts
   const fetchWordTypes = async () => {
+    setLoading(true);
     try {
-      const response = await fetch(`${baseURL}/wordtypes`);
+      const response = await fetch(`${baseURL}/words/wordtypes`);
       const data = await response.json();
       setTypes(data);
+      setLoading(false);
       console.log("wordtypes", data);
     } catch (err) {
+      setLoading(false);
       console.error("Error retrieving word types", err);
     }
   };
@@ -38,18 +42,18 @@ function App() {
 
   const wordsByType = async () => {
     try {
-      const response = await fetch(`${baseURL}/${selectedType}`);
+      const response = await fetch(`${baseURL}/words/${selectedType}`);
       const data = await response.json();
       setWords(data);
-      console.log(`${selectedType}:`, data);
+      console.log("words of selectedType:", data);
     } catch (err) {
-      console.error("Error retrieving words", err);
+      console.error("Error retrieving words by type", err);
     }
   };
 
   useEffect(() => {
     wordsByType();
-  }, [selectedType]);
+  }, []);
 
   // Fetch the previously submitted sentences from the backend when the component mounts
   const fetchSentences = async () => {
@@ -112,21 +116,28 @@ function App() {
           <h1 className="mt-3">Build a Sentence Web App</h1>
         </Form.Label>
       </Form.Group>
-      <Form.Group className="text-center m-5">
-        <Form.Label className="text-center">Choose a word type</Form.Label>
-        <Form.Control
-          as="select"
-          value={selectedType}
-          onChange={handleTypeChange}
-        >
-          <option value="">Select word type</option>
-          {types.map((type, index) => (
-            <option key={index} value={type.type}>
-              {type.type}
-            </option>
-          ))}
-        </Form.Control>
-      </Form.Group>
+      {loading ? (
+        <>
+          Loading...from free hosting service, servers may take a few seconds to
+          start
+        </>
+      ) : (
+        <Form.Group className="text-center m-5">
+          <Form.Label className="text-center">Choose a word type</Form.Label>
+          <Form.Control
+            as="select"
+            value={selectedType}
+            onChange={handleTypeChange}
+          >
+            <option value="">Select word type</option>
+            {types.map((word, index) => (
+              <option key={index} value={word.wordtype}>
+                {word.wordtype}
+              </option>
+            ))}
+          </Form.Control>
+        </Form.Group>
+      )}
 
       {selectedType && (
         <div className="text-center m-5">
@@ -139,8 +150,8 @@ function App() {
             >
               <option value="">Select word</option>
               {words.map((word) => (
-                <option key={word.id} value={word.name}>
-                  {word.name}
+                <option key={word.id} value={word.word}>
+                  {word.word}
                 </option>
               ))}
             </Form.Control>

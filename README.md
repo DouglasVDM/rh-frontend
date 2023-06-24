@@ -45,3 +45,27 @@ This is the frontend of the PERN Stack application. It is built using React and 
 - Where possible ,split App.js into components for maintainability and reusability.
 ---
 ---
+## TDD with Jest
+
+### Install Jest as development dependency
+
+```bash
+npm i -D jest
+```
+
+change the test script in package.json
+
+```json
+"scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "jest",
+    "eject": "react-scripts eject"
+  },
+```
+
+for continuous feedback on changes made to the test file run
+
+```
+npm t -- --watch
+```
