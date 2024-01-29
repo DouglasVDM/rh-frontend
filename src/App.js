@@ -5,17 +5,20 @@ import { ToastContainer } from "react-toastify";
 // components
 import PreviousSentences from "./components/PreviousSentences";
 
-const baseURL =
-  process.env.NODE_ENV === "production"
-    ? "/api/v1/"
-    : "http://localhost:5000/api/v1";
+// const baseURL =
+// process.env.NODE_ENV === "production"
+//   ? "/api/v1/"
+//   : process.env.REACT_APP_API_URL;
 
 // const baseURL = "https://rh-backend.onrender.com/api/v1";
+// const baseURL = "ec2-user@ec2-3-82-93-166.compute-1.amazonaws.com/api/v1";
+// const baseURL = process.env.REACT_APP_API_URL;
+const baseURL = "http://localhost:5000/api/v1";
 
 function App() {
-  const [selectedType, setSelectedType] = useState("");
-  const [selectedWord, setSelectedWord] = useState("");
-  const [sentence, setSentence] = useState("");
+  const [selectedType, setSelectedType] = useState([]);
+  const [selectedWord, setSelectedWord] = useState([]);
+  const [sentence, setSentence] = useState([]);
   const [sentences, setSentences] = useState([]);
   const [types, setTypes] = useState([]);
   const [words, setWords] = useState([]);
@@ -131,8 +134,8 @@ function App() {
           >
             <option value="">Select word type</option>
             {types.map((word, index) => (
-              <option key={index} value={word.wordtype}>
-                {word.wordtype}
+              <option key={index} value={word.type}>
+                {word.type}
               </option>
             ))}
           </Form.Control>
@@ -147,6 +150,7 @@ function App() {
               as="select"
               value={selectedWord}
               onChange={handleWordChange}
+              
             >
               <option value="">Select word</option>
               {words.map((word) => (
