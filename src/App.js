@@ -16,6 +16,7 @@ import PreviousSentences from "./components/PreviousSentences";
 const baseURL = "http://localhost:5000/api/v1";
 
 function App() {
+  const [hello, setHello] = useState("");
   const [selectedType, setSelectedType] = useState([]);
   const [selectedWord, setSelectedWord] = useState([]);
   const [sentence, setSentence] = useState([]);
@@ -23,6 +24,24 @@ function App() {
   const [types, setTypes] = useState([]);
   const [words, setWords] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  const helloWorld = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${baseURL}`);
+      const data = await response.json();
+      setHello(data);
+      setLoading(false);
+      console.log("helloworld", data);
+    } catch (err) {
+      setLoading(false);
+      console.error("Error connecting to server", err);
+    }
+  };
+
+  useEffect(() => {
+    helloWorld();
+  }, []);
 
   // Fetch the word types from the backend when the component mounts
   const fetchWordTypes = async () => {
@@ -117,6 +136,7 @@ function App() {
       <Form.Group className="text-center m-5">
         <Form.Label className="text-center">
           <h1 className="mt-3">Build a Sentence Web App</h1>
+          <p>{hello.message}</p>
         </Form.Label>
       </Form.Group>
       {loading ? (
@@ -150,7 +170,6 @@ function App() {
               as="select"
               value={selectedWord}
               onChange={handleWordChange}
-              
             >
               <option value="">Select word</option>
               {words.map((word) => (
