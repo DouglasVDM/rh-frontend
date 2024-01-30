@@ -75,7 +75,7 @@ function App() {
 
   useEffect(() => {
     wordsByType();
-  }, []);
+  });
 
   // Fetch the previously submitted sentences from the backend when the component mounts
   const fetchSentences = async () => {
