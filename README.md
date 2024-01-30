@@ -3,7 +3,7 @@
 ## Description
 This is the frontend of the PERN Stack application. It is built using React and communicates with the backend API to dynamically build sentences based on word types.
 
-[![ci-cd](https://github.com/DouglasVDM/rh-frontend/actions/workflows/ci-cd.yaml/badge.svg)](https://github.com/DouglasVDM/rh-frontend/actions/workflows/ci-cd.yaml)
+[![ci-cd](https://github.com/DouglasVDM/rh-backend/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/DouglasVDM/rh-backend/actions/workflows/ci-cd.yml)
 
 ## Installation
 1. Clone the repository. `git clone ...`
